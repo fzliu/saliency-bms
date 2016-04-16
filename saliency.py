@@ -40,8 +40,8 @@ from skimage.color import gray2rgb, rgb2lab
 from skimage.io import imread, imsave
 from skimage.transform import rescale
 
-N_THRESHOLDS = 10
-MAX_DIM = 640
+N_THRESHOLDS = 20
+MAX_DIM = 360
 
 parser = argparse.ArgumentParser(description="Compute a saliency map.",
                                  usage="saliency.py -i <input_path>")
