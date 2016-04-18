@@ -33,6 +33,7 @@ import os
 import timeit
 
 # library imports
+import cv2
 import numpy as np
 from scipy import ndimage
 from skimage import img_as_float
@@ -48,6 +49,30 @@ parser = argparse.ArgumentParser(description="Compute a saliency map.",
 parser.add_argument("-i", "--input", type=str, required=True, help="input path")
 
 
+def activate_boolean_map(bool_map):
+    """
+        Performs activation on a single boolean map.
+    """
+
+    # use the boolean map as a mask for flood filling
+    activation = np.array(bool_map, dtype=np.uint8)
+    mask_shape = (bool_map.shape[0] + 2, bool_map.shape[1] + 2)
+    ffill_mask = np.zeros(mask_shape, dtype=np.uint8)
+
+    # top and bottom rows
+    for i in range(0, activation.shape[0]):
+        for j in [0, activation.shape[1] - 1]:
+            if activation[i,j]:
+                cv2.floodFill(activation, ffill_mask, (j, i), 0)
+
+    # left and right columns
+    for i in [0, activation.shape[0] - 1]:
+        for j in range(0, activation.shape[1]):
+            if activation[i,j]:
+                cv2.floodFill(activation, ffill_mask, (j, i), 0)
+
+    return activation
+
 def compute_saliency(img):
     """
         Computes Boolean Map Saliency (BMS).
@@ -60,18 +85,22 @@ def compute_saliency(img):
     bool_maps = []
     for thresh in thresholds:
         img_lab_T = img_lab.transpose(2, 0, 1)
-        bool_maps.extend(list(img_lab_T > thresh))
+        img_thresh = (img_lab_T > thresh)
+        bool_maps.extend(list(img_thresh))
 
     # compute mean attention map
     attn_map = np.zeros(img_lab.shape[:2], dtype=np.float)
     for bool_map in bool_maps:
-        attn_map += ndimage.binary_fill_holes(bool_map)
+        attn_map += activate_boolean_map(bool_map)
     attn_map /= N_THRESHOLDS
 
+    # gaussian smoothing
+    attn_map = cv2.GaussianBlur(attn_map, (0, 0), 3)
+
     # perform normalization
-    l2_norm = np.sqrt((attn_map**2).sum())
-    attn_map /= l2_norm
-    attn_map /= attn_map.max()/255
+    norm = np.sqrt((attn_map**2).sum())
+    attn_map /= norm
+    attn_map /= attn_map.max() / 255
 
     return attn_map.astype(np.uint8)
 
