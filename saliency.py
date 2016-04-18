@@ -35,8 +35,6 @@ import timeit
 # library imports
 import cv2
 import numpy as np
-from scipy import ndimage
-from skimage import img_as_float
 from skimage.color import gray2rgb, rgb2lab
 from skimage.io import imread, imsave
 from skimage.transform import rescale
@@ -113,6 +111,8 @@ def main(args):
     img = imread(args.input)
     if img.ndim == 2:
         img = gray2rgb(img)
+    elif img.shape[2] == 4:
+        img = img[:, :, :3]
     upper_dim = max(img.shape[:2])
     if upper_dim > MAX_DIM:
         img = rescale(img, MAX_DIM/float(upper_dim), order=3) 
