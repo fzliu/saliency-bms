@@ -76,7 +76,7 @@ def compute_saliency(img):
         Computes Boolean Map Saliency (BMS).
     """
 
-    img_lab = rgb2lab(img)/255
+    img_lab = rgb2lab(img)
     thresholds = np.arange(img_lab.min(), img_lab.max(), 1.0 / N_THRESHOLDS)[1:]
 
     # compute boolean maps
