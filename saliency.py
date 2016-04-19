@@ -77,7 +77,7 @@ def compute_saliency(img):
     """
 
     img_lab = rgb2lab(img)/255
-    thresholds = np.arange(0, 1, 1.0 / N_THRESHOLDS)[1:]
+    thresholds = np.arange(img_lab.min(), img_lab.max(), 1.0 / N_THRESHOLDS)[1:]
 
     # compute boolean maps
     bool_maps = []
