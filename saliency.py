@@ -3,7 +3,7 @@ saliency.py - An implementation of Zhang and Sclaroff's Boolean Map Saliency
 algorithm. http://cs-people.bu.edu/jmzhang/BMS/BMS_iccv13_preprint.pdf.
 
 author: Frank Liu - frank.zijie@gmail.com
-last modified: 04/19/2016
+last modified: 05/17/2016
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -77,7 +77,9 @@ def compute_saliency(img):
     """
 
     img_lab = rgb2lab(img)
-    thresholds = np.arange(img_lab.min(), img_lab.max(), 1.0 / N_THRESHOLDS)[1:]
+    img_lab -= img_lab.min()
+    img_lab /= img_lab.max()
+    thresholds = np.arange(0, 1, 1.0 / N_THRESHOLDS)[1:]
 
     # compute boolean maps
     bool_maps = []
