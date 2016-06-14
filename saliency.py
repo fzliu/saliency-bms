@@ -3,7 +3,6 @@ saliency.py - An implementation of Zhang and Sclaroff's Boolean Map Saliency
 algorithm. http://cs-people.bu.edu/jmzhang/BMS/BMS_iccv13_preprint.pdf.
 
 author: Frank Liu - frank.zijie@gmail.com
-last modified: 05/17/2016
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -35,16 +34,19 @@ import timeit
 # library imports
 import cv2
 import numpy as np
-from skimage.color import gray2rgb, rgb2lab
+from skimage.color import gray2rgb, rgb2gray, rgb2lab
 from skimage.io import imread, imsave
 from skimage.transform import rescale
 
-N_THRESHOLDS = 10
-MAX_DIM = 320
 
+N_THRESHOLDS = 10
+
+
+# argparse
 parser = argparse.ArgumentParser(description="Compute a saliency map.",
                                  usage="saliency.py -i <input_path>")
 parser.add_argument("-i", "--input", type=str, required=True, help="input path")
+parser.add_argument("-m", "--max-dim", type=int, default=320, help="resize dimension")
 
 
 def activate_boolean_map(bool_map):
@@ -116,8 +118,8 @@ def main(args):
     elif img.shape[2] == 4:
         img = img[:, :, :3]
     upper_dim = max(img.shape[:2])
-    if upper_dim > MAX_DIM:
-        img = rescale(img, MAX_DIM/float(upper_dim), order=3) 
+    if upper_dim > args.max_dim:
+        img = rescale(img, args.max_dim/float(upper_dim), order=3) 
 
     # compute saliency
     start = timeit.default_timer()
