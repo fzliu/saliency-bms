@@ -2,7 +2,7 @@
 saliency.py - An implementation of Zhang and Sclaroff's Boolean Map Saliency
 algorithm. http://cs-people.bu.edu/jmzhang/BMS/BMS_iccv13_preprint.pdf.
 
-author: Frank Liu - frank.zijie@gmail.com
+author: Frank Liu - frank@frankzliu.com
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
